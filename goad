@@ -32,7 +32,7 @@ export CGO_LDFLAGS="$TGT_LIBGIT/libgit2.a $TGT_LIBSSL/libssl.a $TGT_LIBSSL/libcr
 export CGO_CFLAGS="-I$TGT_LIBGIT/include"
 
 ## use LDFLAGS to inject vars at compile time.
-LDFLAGS=""
+LDFLAGS="-extldflags -static"
 
 
 
