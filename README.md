@@ -21,3 +21,34 @@ Why
 ---
 
 ↑↑↑ that's why
+
+
+Building
+--------
+
+Don't.  The whole point is to use a binary release and get on with your life.
+
+But if you're developing with us...
+
+### dependencies
+
+You need:
+- a go compiler
+- gcc (for cgo to link libgit2 and the other c bits)
+- repeatr (for containers, for building the parts)
+- a smattering of dev headers on your host: 'zlib' and 'dl' (these are bugs waiting to be fixed).
+
+Having a cc toolchain on your host is kind of onerous, even, so we'll be adding more containers in the future
+for the final build & link stage as well.  But for now this is it.
+
+### steps
+
+```
+goad init ## fetch our submodules and do other first-time init.
+goad parts ## build the parts.  this uses containers heavily, and will require root.
+goad ## build the whole thing and run tests.
+./bin/danggit ## huzzah!
+```
+
+If you're only altering the golang components, from here you'll only need to run `goad`.
+Run `goad final` to make a build with the race detector disabled (you want this in production builds).
