@@ -14,7 +14,12 @@ func main() {
 		os.Exit(5)
 	}
 
-	desc, err := repo.DescribeWorkdir(&git.DescribeOptions{})
+	reallyಠ_ಠ, err := git.DefaultDescribeOptions()
+	if err != nil {
+		panic(err) // this is just frankly absurd
+	}
+
+	desc, err := repo.DescribeWorkdir(&reallyಠ_ಠ)
 	if err != nil {
 		fmt.Printf("madness: %s\n", err)
 		os.Exit(6)
