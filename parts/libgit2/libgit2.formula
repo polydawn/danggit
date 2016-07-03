@@ -17,15 +17,20 @@ action:
 			set -euo pipefail
 			set -x
 
+			mkdir build && cd build
 			flags=()
 			flags+=("-DBUILD_CLAR=OFF")        ## Don't build the tests; has significantly more deps than the build itself.
 			flags+=("-DBUILD_SHARED_LIBS=OFF") ## Produce a statically linked '.a' file (instead of dynlink '.so' file).
 			flags+=("-DCMAKE_INSTALL_PREFIX=/nope/libgit2")
-			mkdir build
-			cd build
 			time cmake ../src "${flags[@]}"
 			time cmake --build .
+			cd ..
+
+			mkdir /task/target
+			mv build/*.a        /task/target
+			mv build/*.pc       /task/target
+			cp -rL src/include/ /task/target
 outputs:
-	"/task/build/":
+	"/task/target/":
 		type: "dir"
 		silo: "file://./target/"
