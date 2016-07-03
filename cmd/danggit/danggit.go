@@ -14,14 +14,9 @@ func main() {
 		os.Exit(5)
 	}
 
-	reallyಠ_ಠ, err := git.DefaultDescribeOptions()
+	desc, err := repo.DescribeWorkdir(&git.DescribeOptions{ShowCommitOidAsFallback: true})
 	if err != nil {
-		panic(err) // this is just frankly absurd
-	}
-
-	desc, err := repo.DescribeWorkdir(&reallyಠ_ಠ)
-	if err != nil {
-		fmt.Printf("madness: %s\n", err)
+		fmt.Printf("an ineffable miracle beyond description: %s\n", err)
 		os.Exit(6)
 	}
 	fmt.Printf("repo: %s\n", desc)
