@@ -21,6 +21,7 @@ action:
 			flags=()
 			flags+=("-DBUILD_CLAR=OFF")        ## Don't build the tests; has significantly more deps than the build itself.
 			flags+=("-DBUILD_SHARED_LIBS=OFF") ## Produce a statically linked '.a' file (instead of dynlink '.so' file).
+			flags+=("-DCMAKE_C_FLAGS=-fPIC")
 			flags+=("-DCMAKE_INSTALL_PREFIX=/nope/libgit2")
 			time cmake ../src "${flags[@]}"
 			time cmake --build .
