@@ -22,9 +22,10 @@ export GOBIN="$PWD/bin/"
 export PROJ="$PWD"
 
 ## pray to the linking gods
-TLIBGIT="$PWD/parts/libgit2/target"
-export CGO_LDFLAGS="$TLIBGIT/libgit2.a -L$TLIBGIT"
-export CGO_CFLAGS="-I$TLIBGIT/include"
+TGT_LIBSSL="$PWD/parts/libssl/target"
+TGT_LIBGIT="$PWD/parts/libgit2/target"
+export CGO_LDFLAGS="$TGT_LIBGIT/libgit2.a -L$TGT_LIBGIT $TGT_LIBSSL/libssl.a $TGT_LIBSSL/libcrypto.a"
+export CGO_CFLAGS="-I$TGT_LIBGIT/include"
 
 ## use LDFLAGS to inject vars at compile time.
 LDFLAGS=""
