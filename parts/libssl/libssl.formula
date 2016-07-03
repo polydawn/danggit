@@ -1,0 +1,32 @@
+inputs:
+	"/":
+		## Adviso: contains many build deps which are somewhat arbitrary.  would prefer to replace with properly piecewise and well-pinned deps in the future.
+		type: "tar"
+		hash: "0-wPN--PLP80sClmWF_GtUZMckIEiSIC9nCcbzwun55ucvZA2P3ui9rx63yMVacc" ## staid-ubuntu/ubuntu-14.04.04+builder.frm
+		silo: "http+ca://repeatr.s3.amazonaws.com/assets/"
+	"/task/src/":
+		type: "tar"
+		hash: "DIXG2g0UIXd32VKqt5_ivwzvs0gVsitUd_uF9_2pdeYnPR7yC1iXJWX2b_KYpLh6"
+		silo: "https://www.openssl.org/source/openssl-1.0.2h.tar.gz"
+action:
+	policy: uidzero
+	command:
+		- bash
+		- -c
+		- |
+			set -euo pipefail
+			set -x
+
+			cd src/*
+			time ./config threads no-shared --prefix=/nope/libssl -fPIC -DOPENSSL_PIC
+			time make depend
+			time make
+
+			mkdir /task/target
+			mv *.a          /task/target
+			mv *.pc         /task/target
+			cp -rL include/ /task/target
+outputs:
+	"/task/target/":
+		type: "dir"
+		silo: "file://./target/"
