@@ -7,5 +7,5 @@ import (
 )
 
 func TestGat(t *testing.T) {
-
+	git.OpenRepository(".")
 }
