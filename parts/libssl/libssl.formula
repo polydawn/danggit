@@ -18,13 +18,15 @@ action:
 			set -x
 
 			cd src/*
-			ls -la
 			time ./config threads no-shared --prefix=./install -fPIC -DOPENSSL_PIC
 			time make depend
 			time make
 
-			ls -la
+			mkdir /task/target
+			mv *.a          /task/target
+			mv *.pc         /task/target
+			cp -rL include/ /task/target
 outputs:
-	"/task/build/": # TODO make outputs actually go here
+	"/task/target/":
 		type: "dir"
 		silo: "file://./target/"
