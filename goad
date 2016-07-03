@@ -22,6 +22,10 @@ export GOBIN="$PWD/bin/"
 export PROJ="$PWD"
 
 ## pray to the linking gods
+# todo: libgit isn't currently linking libssh2
+# todo: fix the punt to host '-lz'
+# todo: fix the punt to host '-ldl' (or remove it entirely if possible)
+# todo: beware of the fact the parts builds don't actually consistently use the same headers
 TGT_LIBSSL="$PWD/parts/libssl/target"
 TGT_LIBGIT="$PWD/parts/libgit2/target"
 export CGO_LDFLAGS="$TGT_LIBGIT/libgit2.a $TGT_LIBSSL/libssl.a $TGT_LIBSSL/libcrypto.a -lz -ldl"
