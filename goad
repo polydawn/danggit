@@ -17,8 +17,15 @@ export GOBIN="$PWD/bin/"
 
 
 ### other config scripts?  invoke here.
+
 ## pass pointer to project root dir down, for tests (tests run in varying CWDs, so need this hint)
 export PROJ="$PWD"
+
+## pray to the linking gods
+TLIBGIT="$PWD/parts/libgit2/target"
+export CGO_LDFLAGS="$TLIBGIT/libgit2.a -L$TLIBGIT"
+export CGO_CFLAGS="-I$TLIBGIT/include"
+
 ## use LDFLAGS to inject vars at compile time.
 LDFLAGS=""
 
