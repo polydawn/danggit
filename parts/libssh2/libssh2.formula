@@ -1,0 +1,37 @@
+inputs:
+	"/":
+		## Adviso: contains many build deps which are somewhat arbitrary.  would prefer to replace with properly piecewise and well-pinned deps in the future.
+		type: "tar"
+		hash: "0-wPN--PLP80sClmWF_GtUZMckIEiSIC9nCcbzwun55ucvZA2P3ui9rx63yMVacc" ## staid-ubuntu/ubuntu-14.04.04+builder.frm
+		silo: "http+ca://repeatr.s3.amazonaws.com/assets/"
+	"/task/src/":
+		type: "tar"
+		hash: "yGwCBpwMpSCVlvpikmK3y4Rt-6GXQylEMBtQx7suZJkxIWXVV3RtNE0DAGblO930"
+		silo: "https://www.libssh2.org/download/libssh2-1.7.0.tar.gz"
+action:
+	policy: governor
+	command:
+		- bash
+		- -c
+		- |
+			set -euo pipefail
+			set -x
+
+			cd src/*
+			#CFLAGS="-I$WORK_DIR/include" \
+			#LDFLAGS="-L$WORK_DIR/lib" \
+			time ./configure \
+				--prefix="/nope/libssh2" \
+				--disable-shared \
+				--enable-static \
+
+			time make
+
+			mkdir /task/target
+			mv src/.libs/*.a /task/target
+			mv *.pc          /task/target
+			cp -rL include/  /task/target
+outputs:
+	"/task/target/":
+		type: "dir"
+		silo: "file://./target/"
