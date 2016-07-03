@@ -1,0 +1,31 @@
+inputs:
+	"/":
+		## Adviso: contains many build deps which are somewhat arbitrary.  would prefer to replace with properly piecewise and well-pinned deps in the future.
+		type: "tar"
+		hash: "0-wPN--PLP80sClmWF_GtUZMckIEiSIC9nCcbzwun55ucvZA2P3ui9rx63yMVacc" ## staid-ubuntu/ubuntu-14.04.04+builder.frm
+		silo: "http+ca://repeatr.s3.amazonaws.com/assets/"
+	"/task/src/":
+		type: "git"
+		hash: "37e9278220095435d986e7412d2a97097dab3221"
+		silo: "https://github.com/libgit2/libgit2"
+action:
+	policy: governor
+	command:
+		- bash
+		- -c
+		- |
+			set -euo pipefail
+			set -x
+
+			flags=()
+			flags+=("-DBUILD_CLAR=OFF")        ## Don't build the tests; has significantly more deps than the build itself.
+			flags+=("-DBUILD_SHARED_LIBS=OFF") ## Produce a statically linked '.a' file (instead of dynlink '.so' file).
+			flags+=("-DCMAKE_INSTALL_PREFIX=/nope/libgit2")
+			mkdir build
+			cd build
+			time cmake ../src "${flags[@]}"
+			time cmake --build .
+outputs:
+	"/task/build/":
+		type: "dir"
+		silo: "file://./target/"
