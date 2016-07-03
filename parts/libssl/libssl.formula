@@ -18,7 +18,7 @@ action:
 			set -x
 
 			cd src/*
-			time ./config threads no-shared --prefix=./install -fPIC -DOPENSSL_PIC
+			time ./config threads no-shared --prefix=/nope/libssl -fPIC -DOPENSSL_PIC
 			time make depend
 			time make
 
