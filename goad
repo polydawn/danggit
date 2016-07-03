@@ -84,6 +84,11 @@ else
 		mkdir -p "$(dirname ".gopath/src/$pkg")"
 		ln -snf "$(echo "${pkg//[^\/]}/" | sed s#/#../#g)"../ ".gopath/src/$pkg"
 		;;
+	parts)
+		## fetch/build parts.  these are very slow relative to the regular build, and also require some root for container ops, so it's a manual trigger.
+		parts/libssl/build
+		parts/libgit2/build
+		;;
 	test)
 		set +e ; shift ; set -e # munch $subsection from passing on in "$@"
 		go test -i "$SUBSECTION" -race "$@" &&
@@ -146,9 +151,10 @@ else
 		;;
 	clean)
 		rm -rf "$GOBIN" "$GOPATH/pkg" "$GOPATH/tmp"
+		rm -rf parts/*/target/
 		;;
 	*)
-		echo "Usage: $0 {init|test|install|bench|fmt|doc|cover|clean}" 1>&2;
+		echo "Usage: $0 {init|parts|test|install|bench|fmt|doc|cover|clean}" 1>&2;
 		exit 1
 	;;
 	esac
