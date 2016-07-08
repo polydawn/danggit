@@ -4,7 +4,12 @@ set -euo pipefail
 ### Project details
 name="danggit"
 pkg="polydawn.net/$name" # everything under here will be tested
-cmd="$pkg/cmd/$name"    # if you have a main.main not at the repo root, set this
+# cmd="$pkg/cmd/$name"    # if you have a main.main not at the repo root, set this
+
+cmd_list=()
+for item in $(ls cmd); do
+	cmd_list+=("$pkg/cmd/$item")
+done
 
 
 
@@ -49,7 +54,7 @@ TEST_TIMEOUT="${TEST_TIMEOUT:-"35s"}"
 if [ -z "$SUBCOMMAND" ] ; then
 	(
 		go fmt "$SUBSECTION"
-		go install -race -ldflags "$LDFLAGS" "$cmd" && {
+		go install -race -ldflags "$LDFLAGS" "${cmd_list[@]}" && {
 			echo -e "\E[1;32minstall successful.\E[0;m\n"
 		} || {
 			echo -e "\E[1;41minstall failed!\E[0;m"
@@ -100,10 +105,10 @@ else
 		}
 		;;
 	install)
-		go install -race -ldflags "$LDFLAGS" "$cmd"
+		go install -race -ldflags "$LDFLAGS" "${cmd_list[@]}"
 		;;
 	final)
-		go install -ldflags "$LDFLAGS" "$cmd"
+		go install -ldflags "$LDFLAGS" "${cmd_list[@]}"
 		;;
 	bench)
 		profPath="$GOPATH/tmp/prof/"
