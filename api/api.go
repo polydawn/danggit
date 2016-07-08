@@ -1,17 +1,39 @@
 package git
 
 type LocalRepoPath string
+type RemoteRepoPath string
+
+type Call string
+
+const (
+	Call_ListHeads       = Call("ListHeads")       // ReqListHeads -> RespListHeads
+	Call_ListHeadsRemote = Call("ListHeadsRemote") // ReqListHeadsRemote -> RespListHeads
+)
+
+type Req struct {
+	ThreadID string
+	Call     Call
+	Params   interface{}
+}
+
+type Resp struct {
+	ThreadID string
+	Params   interface{}
+}
 
 type ReqListHeads struct {
-	ThreadID string
-	Repo     LocalRepoPath
-	Filter   string
+	Repo   LocalRepoPath
+	Filter string
+}
+
+type ReqListHeadsRemote struct {
+	Repo   LocalRepoPath
+	Filter string
 }
 
 type RespListHeads struct {
-	ThreadID string
-	Heads    []Head
-	Error    error
+	Heads []Head
+	Error error
 }
 
 type Head struct {
