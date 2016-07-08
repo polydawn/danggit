@@ -22,6 +22,12 @@ func TestHeads(t *testing.T) {
 				So(resp.Error, ShouldBeNil)
 				So(resp.Heads, ShouldHaveLength, 0)
 			})
+
+			Convey("ListHeads_Remote should work", func() {
+				resp := ListHeads_Remote(git.ReqListHeadsRemote{Repo: "repo"})
+				So(resp.Error, ShouldBeNil)
+				So(resp.Heads, ShouldHaveLength, 0)
+			})
 		})
 
 		Convey("and given some commits and branches", func() {
@@ -66,7 +72,13 @@ func TestHeads(t *testing.T) {
 			Convey("ListHeads should work", func() {
 				resp := ListHeads(git.ReqListHeads{Repo: "repo"})
 				So(resp.Error, ShouldBeNil)
-				//So(resp.Heads, ShouldHaveLength, 1)
+				So(resp.Heads, ShouldHaveLength, 1)
+			})
+
+			Convey("ListHeads_Remote should work", func() {
+				resp := ListHeads_Remote(git.ReqListHeadsRemote{Repo: "repo"})
+				So(resp.Error, ShouldBeNil)
+				So(resp.Heads, ShouldHaveLength, 1)
 			})
 		})
 	}))
