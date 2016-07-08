@@ -22,13 +22,13 @@ type Resp struct {
 }
 
 type ReqListHeads struct {
-	Repo   LocalRepoPath
-	Filter string
+	Repo    LocalRepoPath
+	Filters []string
 }
 
 type ReqListHeadsRemote struct {
-	Repo   LocalRepoPath
-	Filter string
+	Repo    LocalRepoPath
+	Filters []string
 }
 
 type RespListHeads struct {
