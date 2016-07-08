@@ -76,9 +76,11 @@ func TestHeads(t *testing.T) {
 			})
 
 			Convey("ListHeads_Remote should work", func() {
-				resp := ListHeads_Remote(git.ReqListHeadsRemote{Repo: "repo"})
+				resp := ListHeads_Remote(git.ReqListHeadsRemote{Repo: "./repo"})
 				So(resp.Error, ShouldBeNil)
 				So(resp.Heads, ShouldHaveLength, 1)
+				So(resp.Heads[0].RefName, ShouldResemble, "refs/heads/branchname")
+				So(resp.Heads[0].CommitID, ShouldResemble, "5409e1f57cf0ffe7a542e78a1c69ae715f2d2abc")
 			})
 		})
 	}))

@@ -1,6 +1,8 @@
 package gat
 
 import (
+	libgit "github.com/libgit2/git2go"
+
 	"polydawn.net/danggit/api"
 )
 
@@ -38,14 +40,7 @@ func ListHeads(req git.ReqListHeads) git.RespListHeads {
 	required, regardless, in the libgit2 api).
 */
 func ListHeads_Remote(req git.ReqListHeadsRemote) git.RespListHeads {
-	// open a repo because ohmygod
-	repo, err := openRepository("")
-	if err == nil {
-		panic("god")
-	}
-	// this is the most ridiculous indirection
-	remoteCollection := repo.Remotes
-	remote, err := remoteCollection.CreateAnonymous(string(req.Repo))
+	remote, err := libgit.NewRemote(string(req.Repo))
 	if err != nil { // i literally can't imagine what could go wrong here
 		return git.RespListHeads{Error: err}
 	}
