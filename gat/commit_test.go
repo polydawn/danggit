@@ -57,8 +57,8 @@ func TestCommit(t *testing.T) {
 			Convey("execgit believe our work", func() {
 				So(
 					execgit.Bake("ls-remote", "repo").Output(),
-					ShouldEqual,
-					"5409e1f57cf0ffe7a542e78a1c69ae715f2d2abc   refs/heads/branchname\n",
+					ShouldResemble,
+					"5409e1f57cf0ffe7a542e78a1c69ae715f2d2abc\trefs/heads/branchname\n",
 				)
 			})
 		})
