@@ -34,5 +34,4 @@ func main() {
 		}
 		commit = commit.Parent(0)
 	}
-
 }

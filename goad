@@ -11,6 +11,8 @@ for item in $(ls cmd); do
 	cmd_list+=("$pkg/cmd/$item")
 done
 
+
+
 ### Normalize path -- all work should be relative to this script's location.
 ## Set up gopath -- also relative to this dir, so we work in isolation.
 cd "$( dirname "${BASH_SOURCE[0]}" )"
