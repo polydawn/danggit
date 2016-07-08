@@ -64,12 +64,10 @@ func TestFetch(t *testing.T) {
 			err = remote.Fetch([]string{refspec}, nil, "")
 			maybePanic(err)
 
-			// ref, err := repo.References.Lookup("remotes/test/master")
 			expectedBranch := fmt.Sprintf("%s/%s", remoteName, branchName)
 			remoteBranch, err := repo.LookupBranch(expectedBranch, libgit.BranchRemote)
 			maybePanic(err)
 			Convey("remote branch commit should be remote commit", func() {
-				// So(ref.Target(), ShouldEqual, commitOid)
 				So(remoteBranch.Reference.Target(), ShouldResemble, commitOid)
 			})
 
