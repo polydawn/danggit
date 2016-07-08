@@ -2,8 +2,15 @@ package gat
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os/exec"
+	"strings"
 	"syscall"
+	"testing"
+
+	. "github.com/smartystreets/goconvey/convey"
+
+	"polydawn.net/danggit/lib/testutil"
 )
 
 func execGit(args ...string) (string, int) {
@@ -33,6 +40,12 @@ func execGit(args ...string) (string, int) {
 	return string(out), 0
 }
 
+func maybePanic(err error) {
+	if err != nil {
+		panic(err)
+	}
+}
+
 func mustCmd(out string, exitCode int) string {
 	if exitCode == 0 {
 		return out
@@ -41,4 +54,24 @@ func mustCmd(out string, exitCode int) string {
 		"expected command to pass; got code %d and message:\n\t%q",
 		exitCode, out,
 	))
+}
+
+func TestHello(t *testing.T) {
+	Convey("Given a local git repo", t,
+		testutil.WithTmpdir(func(c C) {
+			mustCmd(execGit("init", "--", "repo-a"))
+			var commitHash_1, commitHash_2 string
+			testutil.UsingDir("repo-a", func() {
+				mustCmd(execGit("commit", "--allow-empty", "-m", "testrepo-a initial commit"))
+				commitHash_1 = strings.Trim(mustCmd(execGit("rev-parse", "HEAD")), "\n")
+				ioutil.WriteFile("file-a", []byte("abcd"), 0644)
+				mustCmd(execGit("add", "."))
+				mustCmd(execGit("commit", "-m", "testrepo-a commit 1"))
+				commitHash_2 = strings.Trim(mustCmd(execGit("rev-parse", "HEAD")), "\n")
+			})
+
+			Convey("Magic should happen", FailureContinues, func() {
+			})
+		}),
+	)
 }

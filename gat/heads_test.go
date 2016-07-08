@@ -1,31 +1,36 @@
 package gat
 
 import (
-	"io/ioutil"
-	"strings"
 	"testing"
 
+	libgit "github.com/libgit2/git2go"
 	. "github.com/smartystreets/goconvey/convey"
 
+	"polydawn.net/danggit/api"
 	"polydawn.net/danggit/lib/testutil"
 )
 
 func TestHeads(t *testing.T) {
-	Convey("Given a local git repo", t,
-		testutil.WithTmpdir(func(c C) {
-			mustCmd(execGit("init", "--", "repo-a"))
-			var commitHash_1, commitHash_2 string
-			testutil.UsingDir("repo-a", func() {
-				mustCmd(execGit("commit", "--allow-empty", "-m", "testrepo-a initial commit"))
-				commitHash_1 = strings.Trim(mustCmd(execGit("rev-parse", "HEAD")), "\n")
-				ioutil.WriteFile("file-a", []byte("abcd"), 0644)
-				mustCmd(execGit("add", "."))
-				mustCmd(execGit("commit", "-m", "testrepo-a commit 1"))
-				commitHash_2 = strings.Trim(mustCmd(execGit("rev-parse", "HEAD")), "\n")
-			})
+	Convey("Given a local git repo", t, testutil.WithTmpdir(func() {
+		repo, err := libgit.InitRepository("repo", true)
+		maybePanic(err)
 
-			Convey("Magic should happen", FailureContinues, func() {
+		Convey("which is empty", func() {
+			Convey("ListHeads should work", func() {
+				resp := ListHeads(git.ReqListHeads{Repo: "repo"})
+				So(resp.Error, ShouldBeNil)
+				So(resp.Heads, ShouldHaveLength, 0)
 			})
-		}),
-	)
+		})
+
+		Convey("and given some commits and branches", func() {
+			// TODO
+			_ = repo
+
+			Convey("ListHeads should work", func() {
+				resp := ListHeads(git.ReqListHeads{Repo: "repo"})
+				So(resp.Error, ShouldBeNil)
+			})
+		})
+	}))
 }
