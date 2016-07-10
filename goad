@@ -91,16 +91,6 @@ else
 		;;
 	parts)
 		## fetch/build parts.  these are very slow relative to the regular build, and also require some root for container ops, so it's a manual trigger.
-		source meta/toolstrap.sh
-		# have repeatr.
-		which repeatr >/dev/null || {
-			toolstrap \
-				repeatr v0.12 \
-				61ef917c7988d985629a4818858dbc614cb7a6da6c37c2a6bcf6cf97781fc5c83f028243d4c11a2b7d958a1c78fa6c6b \
-				https://github.com/polydawn/repeatr/releases/download/release%2Fv0.12/repeatr-linux-amd64-v0.12.tar.gz
-			PATH="$PATH:$PWD/tools/repeatr/v0.12/"
-		}
-		# build libgit2 (and recursively, things it links).
 		parts/libssl/build
 		parts/libgit2/build
 		;;
