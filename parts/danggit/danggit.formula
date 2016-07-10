@@ -1,0 +1,45 @@
+## Builds -- and tests -- danggit itself.
+##
+## You can *probably* do this on your own host system, if you're daring -- the golang
+## parts should be pretty reliable and portable, anyway.
+## The C parts are another story, however.
+## Using this formula pins a GCC version, just in case.
+## ... as well as a couple other libraries we perhaps *should* handle more explicitly
+## (for example libc), but currently have not individually handled.  So with this
+## at least they're pinned.
+## (Yes, this is important.  Yes, literally host glibc versions burned me in CI.)
+##
+
+inputs:
+	"/":
+		## Adviso: contains many build deps which are somewhat arbitrary.  would prefer to replace with properly piecewise and well-pinned deps in the future.
+		type: "tar"
+		hash: "0-wPN--PLP80sClmWF_GtUZMckIEiSIC9nCcbzwun55ucvZA2P3ui9rx63yMVacc" ## staid-ubuntu/ubuntu-14.04.04+builder.frm
+		silo: "http+ca://repeatr.s3.amazonaws.com/assets/"
+	"/task/src/":
+		type: "git"
+		hash: "%%PLACEHOLDER%%"
+		silo: "../.."
+	"/app/go/":
+		type: "tar"
+		hash: "TnSglEDtDek6Y9JmyA7XMLbwFL9NlA-Sh3IgsD_4gn9fxGjSbCuuUatJ0cZfLGlu"
+		silo: "https://storage.googleapis.com/golang/go1.6.2.linux-amd64.tar.gz"
+action:
+	escapes:
+		mounts:
+		  "/task/src/parts/libssl/target/": "../libssl/target"
+		  "/task/src/parts/libgit2/target/": "../libgit2/target"
+	command:
+		- bash
+		- -c
+		- |
+			set -euo pipefail
+			export GOROOT=/app/go/go
+			export PATH=$PATH:/app/go/go/bin
+
+			cd src/
+			./goad
+outputs:
+	"/task/src/bin/":
+		type: "dir"
+		silo: "file://./target/"
