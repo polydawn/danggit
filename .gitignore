@@ -2,3 +2,6 @@
 /bin/
 /.gopath/pkg/
 /.gopath/tmp/
+
+## ignore tools that are big binaries (they're fetched by other scripts)
+/tools/
