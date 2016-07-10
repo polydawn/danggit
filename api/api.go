@@ -1,5 +1,16 @@
 package git
 
+/*
+	Note that many structures in this package are very close analogs of things
+	also in https://godoc.org/github.com/libgit2/git2go -- for example,
+	our `CommitAttribution` type is almost identical to `git2go.Signature`.
+	This is convergent evolution: we're expressing the same things; but it's
+	important for us to copy them here, both so that the symbols are easy to
+	link in other go programs while staying a lightyear away from cgo,
+	and also because it makes it a helluva lot easier for us to write our
+	serialization layer.
+*/
+
 type LocalRepoPath string
 type RemoteRepoPath string
 
@@ -19,21 +30,6 @@ type Req struct {
 type Resp struct {
 	ThreadID string
 	Params   interface{}
-}
-
-type ReqListHeads struct {
-	Repo    LocalRepoPath
-	Filters []string
-}
-
-type ReqListHeadsRemote struct {
-	Repo    LocalRepoPath
-	Filters []string
-}
-
-type RespListHeads struct {
-	Heads []Head
-	Error error
 }
 
 type Head struct {
