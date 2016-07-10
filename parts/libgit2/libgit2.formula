@@ -6,8 +6,10 @@ inputs:
 		silo: "http+ca://repeatr.s3.amazonaws.com/assets/"
 	"/task/src/":
 		type: "git"
-		hash: "37e9278220095435d986e7412d2a97097dab3221"
-		silo: "https://github.com/libgit2/libgit2"
+		hash: "expat-remotes"
+		silo:
+			- "../../../../outsider/libgit2"
+			- "https://github.com/libgit2/libgit2"
 action:
 	policy: governor
 	command:

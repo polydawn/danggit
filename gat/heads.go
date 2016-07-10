@@ -40,7 +40,7 @@ func ListHeads(req git.ReqListHeads) git.RespListHeads {
 	required, regardless, in the libgit2 api).
 */
 func ListHeads_Remote(req git.ReqListHeadsRemote) git.RespListHeads {
-	remote, err := libgit.NewRemote(string(req.Repo))
+	remote, err := libgit.NewUnattachedRemote(string(req.Repo))
 	if err != nil { // i literally can't imagine what could go wrong here
 		return git.RespListHeads{Error: err}
 	}
