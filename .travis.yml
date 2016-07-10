@@ -1,0 +1,19 @@
+language: go
+
+go:
+  - 1.4
+
+# I know I like my dependencies specified by custom meta tags in HTML!
+# Oh wait, no. No I don't.
+install: true
+
+# Need me a containers for building cthings.
+sudo: required
+
+script:
+  - ./goad init
+  - ./goad parts
+  - ./goad
+
+notifications:
+  email: false
