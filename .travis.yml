@@ -1,0 +1,12 @@
+language: none
+
+# Need me a containers for building cthings.
+sudo: required
+
+script:
+  - ./goad init
+  - ./goad parts
+  - ./parts/danggit/build
+
+notifications:
+  email: false

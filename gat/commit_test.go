@@ -54,13 +54,16 @@ func TestCommit(t *testing.T) {
 			maybePanic(err)
 			branch.Free()
 
-			Convey("execgit believe our work", func() {
-				So(
-					execgit.Bake("ls-remote", "repo").Output(),
-					ShouldResemble,
-					"5409e1f57cf0ffe7a542e78a1c69ae715f2d2abc\trefs/heads/branchname\n",
-				)
-			})
+			Convey("execgit believe our work", testutil.Requires(
+				testutil.RequiresTestLabel("hostgit"),
+				func() {
+					So(
+						execgit.Bake("ls-remote", "repo").Output(),
+						ShouldResemble,
+						"5409e1f57cf0ffe7a542e78a1c69ae715f2d2abc\trefs/heads/branchname\n",
+					)
+				},
+			))
 		})
 	}))
 }

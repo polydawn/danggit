@@ -1,0 +1,8 @@
+#!/bin/bash
+set -euo pipefail
+cd "$( dirname "${BASH_SOURCE[0]}" )"
+source ../../meta/repeatr.sh
+
+danggit_hash="$(git rev-parse HEAD)"
+unset TRAVIS # okay this is a little absurd, but: our currently referenced build of repeatr believes that mounts don't work on travis.  however, that was a problem only on travis' legacy infra.  whee.
+sudo bash -c "$repeatr run $rciflags <(sed "s/%%PLACEHOLDER%%/$danggit_hash/" *.formula)"

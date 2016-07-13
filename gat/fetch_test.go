@@ -71,13 +71,16 @@ func TestFetch(t *testing.T) {
 				So(remoteBranch.Reference.Target(), ShouldResemble, commitOid)
 			})
 
-			Convey("execgit believe our work", func() {
-				So(
-					execgit.Bake("ls-remote", "repo").Output(),
-					ShouldResemble,
-					fmt.Sprintf("%s\trefs/heads/%s\n%s\trefs/remotes/%s\n", commitOid, branchName, commitOid, expectedBranch),
-				)
-			})
+			Convey("execgit believe our work", testutil.Requires(
+				testutil.RequiresTestLabel("hostgit"),
+				func() {
+					So(
+						execgit.Bake("ls-remote", "repo").Output(),
+						ShouldResemble,
+						fmt.Sprintf("%s\trefs/heads/%s\n%s\trefs/remotes/%s\n", commitOid, branchName, commitOid, expectedBranch),
+					)
+				},
+			))
 		})
 	}))
 }
