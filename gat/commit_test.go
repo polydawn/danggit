@@ -17,7 +17,7 @@ func TestCommit(t *testing.T) {
 		repo, err := libgit.InitRepository("repo", true)
 		maybePanic(err)
 
-		Convey("and given some commits and branches", func() {
+		Convey("Committing simple content works", func() {
 			author := &git.CommitAttribution{
 				Name:  "author",
 				Email: "email@domain.wow",
@@ -34,18 +34,6 @@ func TestCommit(t *testing.T) {
 			expectedCommitID := "5409e1f57cf0ffe7a542e78a1c69ae715f2d2abc"
 			So(string(commitID), ShouldResemble, expectedCommitID)
 
-			// create branch
-			func() {
-				commitOid, err := libgit.NewOid(string(commitID))
-				maybePanic(err) // srsly
-				commit, err := repo.LookupCommit(commitOid)
-				maybePanic(err)
-				defer commit.Free()
-				branch, err := repo.CreateBranch("branchname", commit, false)
-				maybePanic(err)
-				defer branch.Free()
-			}()
-
 			Convey("execgit believe our work", testutil.Requires(
 				testutil.RequiresTestLabel("hostgit"),
 				func() {
@@ -55,15 +43,34 @@ func TestCommit(t *testing.T) {
 						ShouldResemble,
 						"hello, world!\n",
 					)
-
-					// check branch reference visible
-					So(
-						execgit.Bake("ls-remote", "repo").Output(),
-						ShouldResemble,
-						expectedCommitID+"\trefs/heads/branchname\n",
-					)
 				},
 			))
+
+			Convey("Creating a new branch at that commit works", func() {
+				// create branch
+				func() {
+					commitOid, err := libgit.NewOid(string(commitID))
+					maybePanic(err) // srsly
+					commit, err := repo.LookupCommit(commitOid)
+					maybePanic(err)
+					defer commit.Free()
+					branch, err := repo.CreateBranch("branchname", commit, false)
+					maybePanic(err)
+					defer branch.Free()
+				}()
+
+				Convey("execgit believe our work", testutil.Requires(
+					testutil.RequiresTestLabel("hostgit"),
+					func() {
+						// check branch reference visible
+						So(
+							execgit.Bake("ls-remote", "repo").Output(),
+							ShouldResemble,
+							expectedCommitID+"\trefs/heads/branchname\n",
+						)
+					},
+				))
+			})
 		})
 	}))
 }
