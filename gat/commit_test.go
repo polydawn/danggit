@@ -7,10 +7,33 @@ import (
 	libgit "github.com/libgit2/git2go"
 	. "github.com/smartystreets/goconvey/convey"
 
+	"polydawn.net/danggit/api"
 	"polydawn.net/danggit/lib/testutil"
 )
 
 func TestCommit(t *testing.T) {
+	Convey("Given a local git repo", t, testutil.WithTmpdir(func() {
+		repo, err := libgit.InitRepository("repo", true)
+		maybePanic(err)
+
+		Convey("and given some commits and branches", func() {
+			author := &git.CommitAttribution{
+				Name:  "author",
+				Email: "email@domain.wow",
+				When:  time.Date(2009, 10, 14, 12, 0, 0, 0, time.UTC),
+			}
+			commitID := createCommit(repo, &git.Commit{
+				Author:    author,
+				Committer: author,
+				Message:   "log message!\n\nwow\n",
+				Parents:   nil,
+			}, []treeEntry{})
+			_ = commitID
+		})
+	}))
+}
+
+func TestCommitOld(t *testing.T) {
 	Convey("Given a local git repo", t, testutil.WithTmpdir(func() {
 		repo, err := libgit.InitRepository("repo", true)
 		maybePanic(err)
