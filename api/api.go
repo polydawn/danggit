@@ -25,6 +25,10 @@ const (
 	Call_ListHeadsRemote = Call("ListHeadsRemote") // ReqListHeadsRemote -> RespListHeads
 )
 
+// REVIEW: we can't export libgit.Oid up here, but perhaps we should at least maintain their byte format
+//  Because the hex parsing and error checking and etc that libgit.NewOid performs is ridiculous.
+//  `libgit.NewOidFromBytes` does a copy but that feels like an acceptable rounding error for our API.
+
 type CommitID string
 type TreeID string
 
