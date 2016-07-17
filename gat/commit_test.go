@@ -25,10 +25,12 @@ func TestCommit(t *testing.T) {
 			commitID := createCommit(repo, &git.Commit{
 				Author:    author,
 				Committer: author,
-				Message:   "log message!\n\nwow\n",
+				Message:   "log message",
 				Parents:   nil,
-			}, []treeEntry{})
-			_ = commitID
+			}, []treeEntry{
+				{Filename: "thefile", Filemode: libgit.FilemodeBlob, Content: []byte("hello, world!\n")},
+			})
+			So(string(commitID), ShouldResemble, "5409e1f57cf0ffe7a542e78a1c69ae715f2d2abc")
 		})
 	}))
 }
