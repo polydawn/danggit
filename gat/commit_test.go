@@ -17,12 +17,14 @@ func TestCommit(t *testing.T) {
 		repo, err := libgit.InitRepository("repo", true)
 		maybePanic(err)
 
+		// chunk of common fixture, not subject of interest
+		author := &git.CommitAttribution{
+			Name:  "author",
+			Email: "email@domain.wow",
+			When:  time.Date(2009, 10, 14, 12, 0, 0, 0, time.UTC),
+		}
+
 		Convey("Committing simple content works", func() {
-			author := &git.CommitAttribution{
-				Name:  "author",
-				Email: "email@domain.wow",
-				When:  time.Date(2009, 10, 14, 12, 0, 0, 0, time.UTC),
-			}
 			commitID := createCommit(repo, &git.Commit{
 				Author:    author,
 				Committer: author,
