@@ -26,7 +26,7 @@ func ListHeads(req git.ReqListHeads) git.RespListHeads {
 		// FIXME ... which makes me realize, there's a reason heads and refs are different words; these funcs might not be using them entirely wisely
 		heads[i] = git.Head{
 			RefName:  ref.Name(),
-			CommitID: ref.Target().String(),
+			CommitID: git.CommitID(ref.Target().String()),
 		}
 		i++
 	}
@@ -50,7 +50,7 @@ func ListHeads_Remote(req git.ReqListHeadsRemote) git.RespListHeads {
 	for i, head := range theirHeads {
 		heads[i] = git.Head{
 			RefName:  head.Name,
-			CommitID: head.Id.String(),
+			CommitID: git.CommitID(head.Id.String()),
 		}
 	}
 	return git.RespListHeads{Heads: heads}

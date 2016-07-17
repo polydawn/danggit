@@ -1,5 +1,9 @@
 package git
 
+import (
+	"time"
+)
+
 /*
 	Note that many structures in this package are very close analogs of things
 	also in https://godoc.org/github.com/libgit2/git2go -- for example,
@@ -21,6 +25,9 @@ const (
 	Call_ListHeadsRemote = Call("ListHeadsRemote") // ReqListHeadsRemote -> RespListHeads
 )
 
+type CommitID string
+type TreeID string
+
 type Req struct {
 	ThreadID string
 	Call     Call
@@ -34,5 +41,19 @@ type Resp struct {
 
 type Head struct {
 	RefName  string
-	CommitID string
+	CommitID CommitID
+}
+
+type Commit struct {
+	Author    *CommitAttribution
+	Committer *CommitAttribution
+	Message   string
+	Parents   []CommitID
+	TreeID    TreeID
+}
+
+type CommitAttribution struct {
+	Name  string
+	Email string
+	When  time.Time
 }
