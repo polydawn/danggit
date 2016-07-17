@@ -1,6 +1,7 @@
 package gat
 
 import (
+	"os"
 	"testing"
 	"time"
 
@@ -73,6 +74,36 @@ func TestCommit(t *testing.T) {
 					},
 				))
 			})
+		})
+
+		Convey("Committing dirs of content works", func() {
+			commitID := createCommit(repo, &git.Commit{
+				Author:    author,
+				Committer: author,
+				Message:   "the most exciting commit",
+				Parents:   nil,
+			}, []treeEntry{
+				{Filename: "thefile", Filemode: libgit.FilemodeBlob, Content: []byte("hello, world!\n")},
+				{Filename: "adir", Filemode: libgit.FilemodeTree},
+				{Filename: "adir/wowfile", Filemode: libgit.FilemodeBlob, Content: []byte("an amazing file\n")},
+				{Filename: "otherfile", Filemode: libgit.FilemodeBlobExecutable, Content: []byte("many content!\n")},
+			})
+			expectedCommitID := "a51ac1479cd387213d4ddfa278346e74a3a789e0"
+			So(string(commitID), ShouldResemble, expectedCommitID)
+
+			Convey("execgit believe our work", testutil.Requires(
+				testutil.RequiresTestLabel("hostgit"),
+				func() {
+					execgit.Bake(gosh.Opts{Cwd: "repo", Out: os.Stdout}, "ls-tree", expectedCommitID).Run()
+					execgit.Bake(gosh.Opts{Cwd: "repo"}, "show", expectedCommitID+":adir/wowfile").RunAndReport()
+					// check file content retrievable by commit hash
+					So(
+						execgit.Bake(gosh.Opts{Cwd: "repo"}, "show", expectedCommitID+":adir/wowfile").Output(),
+						ShouldResemble,
+						"an amazing file\n",
+					)
+				},
+			))
 		})
 	}))
 }
