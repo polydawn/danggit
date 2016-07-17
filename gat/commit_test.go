@@ -5,6 +5,7 @@ import (
 	"time"
 
 	libgit "github.com/libgit2/git2go"
+	"github.com/polydawn/gosh"
 	. "github.com/smartystreets/goconvey/convey"
 
 	"polydawn.net/danggit/api"
@@ -48,6 +49,14 @@ func TestCommit(t *testing.T) {
 			Convey("execgit believe our work", testutil.Requires(
 				testutil.RequiresTestLabel("hostgit"),
 				func() {
+					// check file content retrievable by commit hash
+					So(
+						execgit.Bake(gosh.Opts{Cwd: "repo"}, "show", expectedCommitID+":thefile").Output(),
+						ShouldResemble,
+						"hello, world!\n",
+					)
+
+					// check branch reference visible
 					So(
 						execgit.Bake("ls-remote", "repo").Output(),
 						ShouldResemble,
