@@ -75,3 +75,21 @@ func createCommit(
 	maybePanic(err)
 	return git.CommitID(commitOid.String())
 }
+
+func setBranch(
+	repo *libgit.Repository,
+	branchName string,
+	commitID git.CommitID,
+) {
+	// flip to oid
+	commitOid, err := libgit.NewOid(string(commitID))
+	maybePanic(err)
+	// load commit ptr
+	commit, err := repo.LookupCommit(commitOid)
+	maybePanic(err)
+	defer commit.Free()
+	// create the branch
+	branch, err := repo.CreateBranch(branchName, commit, true)
+	maybePanic(err)
+	defer branch.Free()
+}

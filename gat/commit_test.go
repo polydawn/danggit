@@ -50,16 +50,7 @@ func TestCommit(t *testing.T) {
 
 			Convey("Creating a new branch at that commit works", func() {
 				// create branch
-				func() {
-					commitOid, err := libgit.NewOid(string(commitID))
-					maybePanic(err) // srsly
-					commit, err := repo.LookupCommit(commitOid)
-					maybePanic(err)
-					defer commit.Free()
-					branch, err := repo.CreateBranch("branchname", commit, false)
-					maybePanic(err)
-					defer branch.Free()
-				}()
+				setBranch(repo, "branchname", commitID)
 
 				Convey("execgit believe our work", testutil.Requires(
 					testutil.RequiresTestLabel("hostgit"),
