@@ -38,7 +38,8 @@ func createCommit(
 				blobOid, err := repo.CreateBlobFromBuffer(content.Content)
 				maybePanic(err)
 				// insert
-				treeBuilder.Insert(content.Filename, blobOid, content.Filemode)
+				err = treeBuilder.Insert(content.Filename, blobOid, content.Filemode)
+				maybePanic(err)
 			case libgit.FilemodeLink:
 				panic("TODO")
 			case libgit.FilemodeCommit:
