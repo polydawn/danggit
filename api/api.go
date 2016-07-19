@@ -40,6 +40,19 @@ type Req struct {
 	Params   interface{}
 }
 
+func (req *Req) InitCallParams() {
+	req.Params = func() interface{} {
+		switch req.Call {
+		case Call_ListRefs:
+			return &ReqListRefs{}
+		case Call_ListRefsRemote:
+			return &ReqListRefsRemote{}
+		default:
+			return nil
+		}
+	}()
+}
+
 type Resp struct {
 	ThreadID string
 	Params   interface{}
