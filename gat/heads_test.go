@@ -23,7 +23,7 @@ func TestHeads(t *testing.T) {
 				So(resp.Heads, ShouldHaveLength, 0)
 			})
 
-			Convey("ListHeads_Remote should work", func() {
+			SkipConvey("ListHeads_Remote should work", func() {
 				resp := ListHeads_Remote(git.ReqListHeadsRemote{Repo: "repo"})
 				So(resp.Error, ShouldBeNil)
 				So(resp.Heads, ShouldHaveLength, 0)
@@ -58,7 +58,7 @@ func TestHeads(t *testing.T) {
 				So(resp.Heads, ShouldHaveLength, 1)
 			})
 
-			Convey("ListHeads_Remote should work", func() {
+			SkipConvey("ListHeads_Remote should work", func() {
 				resp := ListHeads_Remote(git.ReqListHeadsRemote{Repo: "repo"})
 				So(resp.Error, ShouldBeNil)
 				So(resp.Heads, ShouldHaveLength, 1)
