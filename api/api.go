@@ -44,7 +44,7 @@ type Resp struct {
 }
 
 type Ref struct {
-	RefName  string
+	Name     string
 	CommitID CommitID
 }
 
