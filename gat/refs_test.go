@@ -1,6 +1,7 @@
 package gat
 
 import (
+	"io/ioutil"
 	"testing"
 	"time"
 
@@ -66,4 +67,26 @@ func TestRefs(t *testing.T) {
 			})
 		})
 	}))
+}
+
+func TestRefsIntegration(t *testing.T) {
+	Convey("Given a cgit-spawned repo", t, testutil.Requires(
+		testutil.RequiresTestLabel("hostgit"),
+		testutil.WithTmpdir(func() {
+			execgit.Bake("init").RunAndReport()
+			ioutil.WriteFile("whop", []byte("woop"), 0644)
+			execgit.Bake("add", ".").RunAndReport()
+			execgit.Bake("commit", "-mmessage", execgitcommitheaders).RunAndReport()
+
+			Convey("which is just one branch", func() {
+				Convey("ListRefs should work", func() {
+					resp := ListRefs(git.ReqListRefs{Repo: ".git"})
+					So(resp.Error, ShouldBeNil)
+					So(resp.Refs, ShouldHaveLength, 1)
+					// note that our ListRefs function does *not* return 'HEAD'.
+					So(resp.Refs[0], ShouldResemble, git.Ref{"refs/heads/master", "c3d2aa879b52d68570d1b16c448c981e8041c2dd"})
+				})
+			})
+		}),
+	))
 }
