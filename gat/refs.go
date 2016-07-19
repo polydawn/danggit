@@ -21,7 +21,7 @@ func ListRefs(req git.ReqListRefs) git.RespListRefs {
 	for cref, err := itr.Next(); err == nil; cref, err = itr.Next() {
 		// TODO maybe check 'isBranch' and '!isRemote' here?  need to decide what semantics we really intend here
 		refs = append(refs, git.Ref{
-			Name:  cref.Name(),
+			Name:     cref.Name(),
 			CommitID: git.CommitID(cref.Target().String()),
 		})
 	}
@@ -60,7 +60,7 @@ func ListRefs_Remote(req git.ReqListRefsRemote) git.RespListRefs {
 	refs := make([]git.Ref, len(theirRefs))
 	for i, cref := range theirRefs {
 		refs[i] = git.Ref{
-			Name:  cref.Name,
+			Name:     cref.Name,
 			CommitID: git.CommitID(cref.Id.String()),
 		}
 	}
