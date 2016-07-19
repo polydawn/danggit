@@ -1,6 +1,7 @@
 package gat
 
 import (
+	"io/ioutil"
 	"testing"
 	"time"
 
@@ -41,13 +42,13 @@ func TestRefs(t *testing.T) {
 			commitID := createCommit(repo, &git.Commit{
 				Author:    author,
 				Committer: author,
-				Message:   "log message",
+				Message:   "log message\n",
 				Parents:   nil,
 			}, []treeEntry{
 				{Filename: "thefile", Filemode: libgit.FilemodeBlob, Content: []byte("hello, world!\n")},
 			})
-			expectedCommitID := "5409e1f57cf0ffe7a542e78a1c69ae715f2d2abc"
-			So(string(commitID), ShouldResemble, expectedCommitID)
+			expectedCommitID := git.CommitID("c57900257a062ce9cd0c69a05bd5837e437626c8")
+			So(commitID, ShouldResemble, expectedCommitID)
 
 			// create branch
 			setBranch(repo, "branchname", commitID)
@@ -56,7 +57,7 @@ func TestRefs(t *testing.T) {
 				resp := ListRefs(git.ReqListRefs{Repo: "repo"})
 				So(resp.Error, ShouldBeNil)
 				So(resp.Refs, ShouldHaveLength, 1)
-				So(resp.Refs[0], ShouldResemble, git.Ref{"refs/heads/branchname", "5409e1f57cf0ffe7a542e78a1c69ae715f2d2abc"})
+				So(resp.Refs[0], ShouldResemble, git.Ref{"refs/heads/branchname", expectedCommitID})
 			})
 
 			SkipConvey("ListRefs_Remote should work", func() {
@@ -66,4 +67,26 @@ func TestRefs(t *testing.T) {
 			})
 		})
 	}))
+}
+
+func TestRefsIntegration(t *testing.T) {
+	Convey("Given a cgit-spawned repo", t, testutil.Requires(
+		testutil.RequiresTestLabel("hostgit"),
+		testutil.WithTmpdir(func() {
+			execgit.Bake("init").RunAndReport()
+			ioutil.WriteFile("thefile", []byte("hello, world!\n"), 0644)
+			execgit.Bake("add", ".").RunAndReport()
+			execgit.Bake("commit", "-mlog message", execgitcommitheaders).RunAndReport()
+
+			Convey("which is just one branch", func() {
+				Convey("ListRefs should work", func() {
+					resp := ListRefs(git.ReqListRefs{Repo: ".git"})
+					So(resp.Error, ShouldBeNil)
+					So(resp.Refs, ShouldHaveLength, 1)
+					// note that our ListRefs function does *not* return 'HEAD'.
+					So(resp.Refs[0], ShouldResemble, git.Ref{"refs/heads/master", "c57900257a062ce9cd0c69a05bd5837e437626c8"})
+				})
+			})
+		}),
+	))
 }

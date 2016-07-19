@@ -11,6 +11,6 @@ type ReqListRefsRemote struct {
 }
 
 type RespListRefs struct {
-	Refs []Ref
+	Refs  []Ref
 	Error error
 }

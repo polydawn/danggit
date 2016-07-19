@@ -21,3 +21,14 @@ var execgit gosh.Command = gosh.Gosh(
 		},
 	},
 )
+
+var execgitcommitheaders = gosh.Opts{
+	Env: map[string]string{
+		"GIT_AUTHOR_NAME":     "author",
+		"GIT_AUTHOR_EMAIL":    "email@domain.wow",
+		"GIT_AUTHOR_DATE":     "14 Oct 2009 12:00:00 -0000",
+		"GIT_COMMITTER_NAME":  "author",
+		"GIT_COMMITTER_EMAIL": "email@domain.wow",
+		"GIT_COMMITTER_DATE":  "14 Oct 2009 12:00:00 -0000",
+	},
+}
