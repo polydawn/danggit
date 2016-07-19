@@ -61,7 +61,8 @@ func TestRefs(t *testing.T) {
 				So(resp.Refs, ShouldHaveLength, 1)
 				So(resp.Refs[0], ShouldResemble, git.Ref{"refs/heads/branchname", "5409e1f57cf0ffe7a542e78a1c69ae715f2d2abc"})
 				execgit.Bake("ls-tree", "branchname", gosh.Opts{Out: os.Stdout, Cwd: "repo"}).Run()
-				execgit.Bake("log", "-p", "--pretty=fuller", "--parents", gosh.Opts{Out: os.Stdout, Cwd: "repo"}, "branchname").Run()
+				execgit.Bake("log", "-p", "--pretty=fuller", "--parents", "--date=raw", gosh.Opts{Out: os.Stdout, Cwd: "repo"}, "branchname").Run()
+				execgit.Bake("cat-file", "commit", "5409e1f57cf0ffe7a542e78a1c69ae715f2d2abc", gosh.Opts{Out: os.Stdout, Cwd: "repo"}).Run()
 			})
 
 			SkipConvey("ListRefs_Remote should work", func() {
@@ -82,7 +83,8 @@ func TestRefsIntegration(t *testing.T) {
 			execgit.Bake("add", ".").RunAndReport()
 			execgit.Bake("commit", "-mlog message", execgitcommitheaders).RunAndReport()
 			execgit.Bake("ls-tree", "master", gosh.Opts{Out: os.Stdout}).Run()
-			execgit.Bake("log", "-p", "--pretty=fuller", "--parents", gosh.Opts{Out: os.Stdout}).Run()
+			execgit.Bake("log", "-p", "--pretty=fuller", "--parents", "--date=raw", gosh.Opts{Out: os.Stdout}).Run()
+			execgit.Bake("cat-file", "commit", "c57900257a062ce9cd0c69a05bd5837e437626c8", gosh.Opts{Out: os.Stdout}).Run()
 
 			Convey("which is just one branch", func() {
 				Convey("ListRefs should work", func() {
