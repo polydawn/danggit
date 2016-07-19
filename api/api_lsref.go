@@ -1,16 +1,16 @@
 package git
 
-type ReqListHeads struct {
+type ReqListRefs struct {
 	Repo    LocalRepoPath
 	Filters []string
 }
 
-type ReqListHeadsRemote struct {
+type ReqListRefsRemote struct {
 	Repo    RemoteRepoPath
 	Filters []string
 }
 
-type RespListHeads struct {
-	Heads []Head
+type RespListRefs struct {
+	Refs []Ref
 	Error error
 }

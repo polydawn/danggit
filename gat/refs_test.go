@@ -11,22 +11,22 @@ import (
 	"polydawn.net/danggit/lib/testutil"
 )
 
-func TestHeads(t *testing.T) {
+func TestRefs(t *testing.T) {
 	Convey("Given a local git repo", t, testutil.WithTmpdir(func() {
 		repo, err := libgit.InitRepository("repo", true)
 		maybePanic(err)
 
 		Convey("which is empty", func() {
-			Convey("ListHeads should work", func() {
-				resp := ListHeads(git.ReqListHeads{Repo: "repo"})
+			Convey("ListRefs should work", func() {
+				resp := ListRefs(git.ReqListRefs{Repo: "repo"})
 				So(resp.Error, ShouldBeNil)
-				So(resp.Heads, ShouldHaveLength, 0)
+				So(resp.Refs, ShouldHaveLength, 0)
 			})
 
-			SkipConvey("ListHeads_Remote should work", func() {
-				resp := ListHeads_Remote(git.ReqListHeadsRemote{Repo: "repo"})
+			SkipConvey("ListRefs_Remote should work", func() {
+				resp := ListRefs_Remote(git.ReqListRefsRemote{Repo: "repo"})
 				So(resp.Error, ShouldBeNil)
-				So(resp.Heads, ShouldHaveLength, 0)
+				So(resp.Refs, ShouldHaveLength, 0)
 			})
 		})
 
@@ -52,16 +52,17 @@ func TestHeads(t *testing.T) {
 			// create branch
 			setBranch(repo, "branchname", commitID)
 
-			Convey("ListHeads should work", func() {
-				resp := ListHeads(git.ReqListHeads{Repo: "repo"})
+			Convey("ListRefs should work", func() {
+				resp := ListRefs(git.ReqListRefs{Repo: "repo"})
 				So(resp.Error, ShouldBeNil)
-				So(resp.Heads, ShouldHaveLength, 1)
+				So(resp.Refs, ShouldHaveLength, 1)
+				So(resp.Refs[0], ShouldResemble, git.Ref{"refs/heads/branchname", "5409e1f57cf0ffe7a542e78a1c69ae715f2d2abc"})
 			})
 
-			SkipConvey("ListHeads_Remote should work", func() {
-				resp := ListHeads_Remote(git.ReqListHeadsRemote{Repo: "repo"})
+			SkipConvey("ListRefs_Remote should work", func() {
+				resp := ListRefs_Remote(git.ReqListRefsRemote{Repo: "repo"})
 				So(resp.Error, ShouldBeNil)
-				So(resp.Heads, ShouldHaveLength, 1)
+				So(resp.Refs, ShouldHaveLength, 1)
 			})
 		})
 	}))
