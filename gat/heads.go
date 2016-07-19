@@ -4,29 +4,28 @@ import (
 	"polydawn.net/danggit/api"
 )
 
-func ListHeads(req git.ReqListHeads) git.RespListHeads {
+func ListRefs(req git.ReqListRefs) git.RespListRefs {
 	// dial
 	repo, err := openRepository(req.Repo)
 	if err != nil {
-		return git.RespListHeads{Error: err}
+		return git.RespListRefs{Error: err}
 	}
 	// read heads
 	// FIXME why the hell does this take one glob when `remote.Ls` takes a filter *list*...
 	itr, err := repo.NewReferenceIteratorGlob("*")
 	if err != nil {
-		return git.RespListHeads{Error: err}
+		return git.RespListRefs{Error: err}
 	}
 	// flip to our api types
-	heads := make([]git.Head, 0)
-	for ref, err := itr.Next(); err == nil; ref, err = itr.Next() {
+	refs := make([]git.Ref, 0)
+	for cref, err := itr.Next(); err == nil; cref, err = itr.Next() {
 		// TODO maybe check 'isBranch' and '!isRemote' here?  need to decide what semantics we really intend here
-		// FIXME ... which makes me realize, there's a reason heads and refs are different words; these funcs might not be using them entirely wisely
-		heads = append(heads, git.Head{
-			RefName:  ref.Name(),
-			CommitID: git.CommitID(ref.Target().String()),
+		refs = append(refs, git.Ref{
+			RefName:  cref.Name(),
+			CommitID: git.CommitID(cref.Target().String()),
 		})
 	}
-	return git.RespListHeads{Heads: heads}
+	return git.RespListRefs{Refs: refs}
 }
 
 /*
@@ -35,7 +34,7 @@ func ListHeads(req git.ReqListHeads) git.RespListHeads {
 	may or may not exist in a repo that really shouldn't need to exist (but is
 	required, regardless, in the libgit2 api).
 */
-func ListHeads_Remote(req git.ReqListHeadsRemote) git.RespListHeads {
+func ListRefs_Remote(req git.ReqListRefsRemote) git.RespListRefs {
 	// open a repo because ohmygod
 	repo, err := openRepository("")
 	if err == nil {
@@ -45,25 +44,25 @@ func ListHeads_Remote(req git.ReqListHeadsRemote) git.RespListHeads {
 	remoteCollection := repo.Remotes
 	remote, err := remoteCollection.CreateAnonymous(string(req.Repo))
 	if err != nil { // i literally can't imagine what could go wrong here
-		return git.RespListHeads{Error: err}
+		return git.RespListRefs{Error: err}
 	}
 	// dial
 	err = remote.ConnectFetch(nil, nil, nil)
 	if err != nil {
-		return git.RespListHeads{Error: err}
+		return git.RespListRefs{Error: err}
 	}
 	// read heads
-	theirHeads, err := remote.Ls(req.Filters...)
+	theirRefs, err := remote.Ls(req.Filters...)
 	if err != nil {
-		return git.RespListHeads{Error: err}
+		return git.RespListRefs{Error: err}
 	}
 	// flip to our api types
-	heads := make([]git.Head, len(theirHeads))
-	for i, head := range theirHeads {
-		heads[i] = git.Head{
-			RefName:  head.Name,
-			CommitID: git.CommitID(head.Id.String()),
+	refs := make([]git.Ref, len(theirRefs))
+	for i, cref := range theirRefs {
+		refs[i] = git.Ref{
+			RefName:  cref.Name,
+			CommitID: git.CommitID(cref.Id.String()),
 		}
 	}
-	return git.RespListHeads{Heads: heads}
+	return git.RespListRefs{Refs: refs}
 }

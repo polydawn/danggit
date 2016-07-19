@@ -21,8 +21,8 @@ type RemoteRepoPath string
 type Call string
 
 const (
-	Call_ListHeads       = Call("ListHeads")       // ReqListHeads -> RespListHeads
-	Call_ListHeadsRemote = Call("ListHeadsRemote") // ReqListHeadsRemote -> RespListHeads
+	Call_ListRefs       = Call("ListRefs")       // ReqListRefs -> RespListRefs
+	Call_ListRefsRemote = Call("ListRefsRemote") // ReqListRefsRemote -> RespListRefs
 )
 
 // REVIEW: we can't export libgit.Oid up here, but perhaps we should at least maintain their byte format
@@ -43,7 +43,7 @@ type Resp struct {
 	Params   interface{}
 }
 
-type Head struct {
+type Ref struct {
 	RefName  string
 	CommitID CommitID
 }
