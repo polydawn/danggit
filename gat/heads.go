@@ -1,8 +1,6 @@
 package gat
 
 import (
-	libgit "github.com/libgit2/git2go"
-
 	"polydawn.net/danggit/api"
 )
 
@@ -33,10 +31,26 @@ func ListHeads(req git.ReqListHeads) git.RespListHeads {
 	return git.RespListHeads{Heads: heads}
 }
 
+/*
+	Note: unlike `git ls-remote`, your parameter for the repo to look at will *always*
+	be treated like a URL -- there is no ambiguity, regardless of what remote names
+	may or may not exist in a repo that really shouldn't need to exist (but is
+	required, regardless, in the libgit2 api).
+*/
 func ListHeads_Remote(req git.ReqListHeadsRemote) git.RespListHeads {
-	remote := &libgit.Remote{}
+	// open a repo because ohmygod
+	repo, err := openRepository("")
+	if err == nil {
+		panic("god")
+	}
+	// this is the most ridiculous indirection
+	remoteCollection := repo.Remotes
+	remote, err := remoteCollection.CreateAnonymous(string(req.Repo))
+	if err != nil { // i literally can't imagine what could go wrong here
+		return git.RespListHeads{Error: err}
+	}
 	// dial
-	err := remote.ConnectFetch(nil, nil, nil) // FIXME wait, what?  where do i set the path?
+	err = remote.ConnectFetch(nil, nil, nil)
 	if err != nil {
 		return git.RespListHeads{Error: err}
 	}
