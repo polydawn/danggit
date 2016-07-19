@@ -28,12 +28,12 @@ func TestCommit(t *testing.T) {
 			commitID := createCommit(repo, &git.Commit{
 				Author:    author,
 				Committer: author,
-				Message:   "log message",
+				Message:   "log message\n",
 				Parents:   nil,
 			}, []treeEntry{
 				{Filename: "thefile", Filemode: libgit.FilemodeBlob, Content: []byte("hello, world!\n")},
 			})
-			expectedCommitID := "5409e1f57cf0ffe7a542e78a1c69ae715f2d2abc"
+			expectedCommitID := "c57900257a062ce9cd0c69a05bd5837e437626c8"
 			So(string(commitID), ShouldResemble, expectedCommitID)
 
 			Convey("execgit believe our work", testutil.Requires(
