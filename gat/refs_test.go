@@ -2,10 +2,12 @@ package gat
 
 import (
 	"io/ioutil"
+	"os"
 	"testing"
 	"time"
 
 	libgit "github.com/libgit2/git2go"
+	"github.com/polydawn/gosh"
 	. "github.com/smartystreets/goconvey/convey"
 
 	"polydawn.net/danggit/api"
@@ -58,6 +60,8 @@ func TestRefs(t *testing.T) {
 				So(resp.Error, ShouldBeNil)
 				So(resp.Refs, ShouldHaveLength, 1)
 				So(resp.Refs[0], ShouldResemble, git.Ref{"refs/heads/branchname", "5409e1f57cf0ffe7a542e78a1c69ae715f2d2abc"})
+				execgit.Bake("ls-tree", "branchname", gosh.Opts{Out: os.Stdout, Cwd: "repo"}).Run()
+				execgit.Bake("log", "-p", "--pretty=fuller", "--parents", gosh.Opts{Out: os.Stdout, Cwd: "repo"}, "branchname").Run()
 			})
 
 			SkipConvey("ListRefs_Remote should work", func() {
@@ -74,9 +78,11 @@ func TestRefsIntegration(t *testing.T) {
 		testutil.RequiresTestLabel("hostgit"),
 		testutil.WithTmpdir(func() {
 			execgit.Bake("init").RunAndReport()
-			ioutil.WriteFile("whop", []byte("woop"), 0644)
+			ioutil.WriteFile("thefile", []byte("hello, world!\n"), 0644)
 			execgit.Bake("add", ".").RunAndReport()
-			execgit.Bake("commit", "-mmessage", execgitcommitheaders).RunAndReport()
+			execgit.Bake("commit", "-mlog message", execgitcommitheaders).RunAndReport()
+			execgit.Bake("ls-tree", "master", gosh.Opts{Out: os.Stdout}).Run()
+			execgit.Bake("log", "-p", "--pretty=fuller", "--parents", gosh.Opts{Out: os.Stdout}).Run()
 
 			Convey("which is just one branch", func() {
 				Convey("ListRefs should work", func() {
@@ -84,7 +90,7 @@ func TestRefsIntegration(t *testing.T) {
 					So(resp.Error, ShouldBeNil)
 					So(resp.Refs, ShouldHaveLength, 1)
 					// note that our ListRefs function does *not* return 'HEAD'.
-					So(resp.Refs[0], ShouldResemble, git.Ref{"refs/heads/master", "c3d2aa879b52d68570d1b16c448c981e8041c2dd"})
+					So(resp.Refs[0], ShouldResemble, git.Ref{"refs/heads/master", "c57900257a062ce9cd0c69a05bd5837e437626c8"})
 				})
 			})
 		}),
