@@ -49,6 +49,7 @@ type Ref struct {
 }
 
 type Commit struct {
+	ID        CommitID
 	Author    *CommitAttribution
 	Committer *CommitAttribution
 	Message   string
