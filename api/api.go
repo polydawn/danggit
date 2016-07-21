@@ -18,13 +18,6 @@ import (
 type LocalRepoPath string
 type RemoteRepoPath string
 
-type Call string
-
-const (
-	Call_ListRefs       = Call("ListRefs")       // ReqListRefs -> RespListRefs
-	Call_ListRefsRemote = Call("ListRefsRemote") // ReqListRefsRemote -> RespListRefs
-)
-
 // REVIEW: we can't export libgit.Oid up here, but perhaps we should at least maintain their byte format
 //  Because the hex parsing and error checking and etc that libgit.NewOid performs is ridiculous.
 //  `libgit.NewOidFromBytes` does a copy but that feels like an acceptable rounding error for our API.
@@ -38,19 +31,6 @@ type Req struct {
 	ThreadID string
 	Call     Call
 	Params   interface{}
-}
-
-func (req *Req) InitCallParams() {
-	req.Params = func() interface{} {
-		switch req.Call {
-		case Call_ListRefs:
-			return &ReqListRefs{}
-		case Call_ListRefsRemote:
-			return &ReqListRefsRemote{}
-		default:
-			return nil
-		}
-	}()
 }
 
 type Resp struct {
