@@ -7,6 +7,14 @@ const (
 	Call_ListRefsRemote = Call("ListRefsRemote") // ReqListRefsRemote -> RespListRefs
 )
 
+var table = []struct {
+	Call
+	ReqType interface{}
+	Route   func(d *Dispatcher) interface{}
+}{
+	{Call_ListRefs, &ReqListRefs{}, func(d *Dispatcher) interface{} { return d.DoListRefs }},
+}
+
 func (req *Req) InitCallParams() {
 	req.Params = func() interface{} {
 		switch req.Call {
