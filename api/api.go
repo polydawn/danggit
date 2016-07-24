@@ -32,6 +32,8 @@ const (
 type CommitID string
 type TreeID string
 
+type RefName string
+
 type Req struct {
 	ThreadID string
 	Call     Call
@@ -44,7 +46,7 @@ type Resp struct {
 }
 
 type Ref struct {
-	Name     string
+	Name     RefName
 	CommitID CommitID
 }
 
